@@ -40,6 +40,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  flyway:
+    image: flyway/flyway:7.7.0
+    environment:
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB
+      - POSTGRES_PORT=5432
+      - HOST
+      - FLYWAY_USER=${DB_USERNAME}
+      - FLYWAY_PASSWORD=${DB_PASSWORD}
+      - FLYWAY_URL=jdbc:postgresql://db:5432/${DB}
+      - FLYWAY_GROUP=true
+    command: -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ./db/sql_migrations:/flyway/sql
+    depends_on:
+      - db
 volumes:
   db-data:
 secrets:
